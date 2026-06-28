@@ -3,6 +3,8 @@ package io.github.ngraciano.libraryapi.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
+
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
@@ -26,6 +28,9 @@ public class Author {
     @Column(name = "nationality",length = 50)
     private String nationality;
 
-    @OneToMany(mappedBy = "author")
-    private List<Book> books;
+
+ @OneToMany(mappedBy = "author")
+ @ToString.Exclude
+ private List<Book> books;
+
 }

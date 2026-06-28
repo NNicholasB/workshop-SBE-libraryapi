@@ -2,6 +2,7 @@ package io.github.ngraciano.libraryapi.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -32,6 +33,7 @@ public class Book {
 
     @Column(name = "price",precision = 18,scale = 2)
     private BigDecimal price;
+
 
     @ManyToOne
     @JoinColumn(name="id_author")

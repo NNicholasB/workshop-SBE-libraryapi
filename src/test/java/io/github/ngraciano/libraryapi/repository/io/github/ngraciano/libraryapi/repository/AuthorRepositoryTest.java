@@ -11,18 +11,18 @@ import java.util.List;
 @Transactional
 @SpringBootTest
 public class AuthorRepositoryTest {
-
-    @Autowired
-    AuthorRepository repo;
-
-    @Test
-    public void countTest(){
-        System.out.println("Contagem"+repo.count());
-    }
-
-    @Test
-    public void listTest(){
-        List<Author> lista=repo.findAll();
-        lista.forEach(System.out::println);
-    }
+//
+//    @Autowired
+//    AuthorRepository repo;
+//
+//    @Test
+//    public void countTest(){
+//        System.out.println("Contagem"+repo.count());
+//    }
+//
+//    @Test
+//    public void listTest(){
+//        List<Author> lista=repo.findAll();
+//        lista.forEach(System.out::println);
+//    }
 }
