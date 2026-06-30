@@ -21,15 +21,6 @@ public class DatabaseConfiguration {
     @Value("${spring.datasource.driver-class-name}")
     String driver;
 
-   // @Bean
-    public DataSource datasource(){
-        DriverManagerDataSource ds=new DriverManagerDataSource();
-        ds.setUrl(url);
-        ds.setUsername(username);
-        ds.setPassword(password);
-        ds.setDriverClassName(driver);
-        return ds;
-    }
 
     @Bean
     public DataSource hikariDataSource(){
