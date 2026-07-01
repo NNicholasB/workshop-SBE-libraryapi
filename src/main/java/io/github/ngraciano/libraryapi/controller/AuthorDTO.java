@@ -3,8 +3,9 @@ package io.github.ngraciano.libraryapi.controller;
 import io.github.ngraciano.libraryapi.model.Author;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
-public record AuthorDTO(String name, LocalDate dateBirth,String nationality) {
+public record AuthorDTO(UUID id, String name, LocalDate dateBirth, String nationality) {
 
 
     public Author mapToAuthor(){
