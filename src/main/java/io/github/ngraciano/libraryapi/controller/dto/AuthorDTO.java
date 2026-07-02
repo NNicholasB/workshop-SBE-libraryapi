@@ -1,4 +1,4 @@
-package io.github.ngraciano.libraryapi.controller;
+package io.github.ngraciano.libraryapi.controller.dto;
 
 import io.github.ngraciano.libraryapi.model.Author;
 
