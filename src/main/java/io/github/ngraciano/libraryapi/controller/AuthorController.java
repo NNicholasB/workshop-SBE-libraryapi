@@ -3,32 +3,37 @@ package io.github.ngraciano.libraryapi.controller;
 
 import io.github.ngraciano.libraryapi.controller.dto.AuthorDTO;
 import io.github.ngraciano.libraryapi.controller.dto.ErrorResponse;
+import io.github.ngraciano.libraryapi.exceptions.DuplicateEntryException;
+import io.github.ngraciano.libraryapi.exceptions.OperationNotPermitted;
 import io.github.ngraciano.libraryapi.model.Author;
 import io.github.ngraciano.libraryapi.service.AuthorService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("authors")
+@RequiredArgsConstructor
 public class AuthorController {
 
 
     private final AuthorService service;
 
-    public AuthorController(AuthorService service){
-        this.service=service;
-    }
 
     @PostMapping
-    public ResponseEntity<Void> save(@RequestBody AuthorDTO author){
-        Author authorEntity =author.mapToAuthor();
+    public ResponseEntity<Object> save(@RequestBody AuthorDTO author){
+
+      try{
+          Author authorEntity =author.mapToAuthor();
+
         service.save(authorEntity);
 
       URI location= ServletUriComponentsBuilder.
@@ -37,6 +42,10 @@ public class AuthorController {
                 toUri();
 
         return  ResponseEntity.created(location).build();
+    }catch (DuplicateEntryException e){
+          var errorDto= ErrorResponse.conflict(e.getMessage());
+     return ResponseEntity.status(errorDto.status()).body(errorDto);
+      }
     }
 
     @GetMapping("/{id}")
@@ -52,15 +61,19 @@ public class AuthorController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<Void> deleteById(@PathVariable String id){
+    public ResponseEntity<Object> deleteById(@PathVariable String id){
         UUID idAuthor=UUID.fromString(id);
         Optional<Author> author=service.findById(idAuthor);
-        if (author.isEmpty()){
-            return ResponseEntity.notFound().build();
-                  }
-        service.delete(author.get());
-        return ResponseEntity.noContent().build();
-
+        try {
+            if (author.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+            service.delete(author.get());
+            return ResponseEntity.noContent().build();
+        }catch (OperationNotPermitted e){
+            var errorDto=ErrorResponse.responseDefault(e.getMessage());
+            return ResponseEntity.status(errorDto.status()).body(errorDto);
+        }
     }
 
     @GetMapping
@@ -71,9 +84,11 @@ public class AuthorController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<Void> update(@PathVariable("id") String id,@RequestBody AuthorDTO dto){
+    public ResponseEntity<Object> update(@PathVariable("id") String id,@RequestBody AuthorDTO dto){
         UUID idAuthor=UUID.fromString(id);
         Optional<Author>authorOp=service.findById(idAuthor);
+        try{
+
         if (authorOp.isEmpty()){
             return ResponseEntity.notFound().build();
         }
@@ -83,5 +98,9 @@ public class AuthorController {
         author.setDateBirth(dto.dateBirth());
         service.update(author);
         return ResponseEntity.noContent().build();
+    }catch (DuplicateEntryException e ){
+            var errorDto=ErrorResponse.conflict(e.getMessage());
+            return  ResponseEntity.status(errorDto.status()).body(errorDto);
+        }
     }
 }
