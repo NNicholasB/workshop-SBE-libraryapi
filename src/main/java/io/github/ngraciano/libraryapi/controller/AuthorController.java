@@ -7,8 +7,10 @@ import io.github.ngraciano.libraryapi.exceptions.DuplicateEntryException;
 import io.github.ngraciano.libraryapi.exceptions.OperationNotPermitted;
 import io.github.ngraciano.libraryapi.model.Author;
 import io.github.ngraciano.libraryapi.service.AuthorService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -29,7 +31,7 @@ public class AuthorController {
 
 
     @PostMapping
-    public ResponseEntity<Object> save(@RequestBody AuthorDTO author){
+    public ResponseEntity<Object> save(@RequestBody @Valid AuthorDTO author){
 
       try{
           Author authorEntity =author.mapToAuthor();
