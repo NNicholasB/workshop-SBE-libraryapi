@@ -3,6 +3,7 @@ package io.github.ngraciano.libraryapi.controller;
 
 import io.github.ngraciano.libraryapi.controller.dto.AuthorDTO;
 import io.github.ngraciano.libraryapi.controller.dto.ErrorResponse;
+import io.github.ngraciano.libraryapi.controller.mappers.AuthorMapper;
 import io.github.ngraciano.libraryapi.exceptions.DuplicateEntryException;
 import io.github.ngraciano.libraryapi.exceptions.OperationNotPermitted;
 import io.github.ngraciano.libraryapi.model.Author;
@@ -28,19 +29,20 @@ public class AuthorController {
 
 
     private final AuthorService service;
+    private final AuthorMapper mapper;
 
 
     @PostMapping
-    public ResponseEntity<Object> save(@RequestBody @Valid AuthorDTO author){
+    public ResponseEntity<Object> save(@RequestBody @Valid AuthorDTO dto){
 
       try{
-          Author authorEntity =author.mapToAuthor();
+          Author author =mapper.toEntity(dto);
 
-        service.save(authorEntity);
+        service.save(author);
 
       URI location= ServletUriComponentsBuilder.
                 fromCurrentRequest().
-                path("/{id}").buildAndExpand(authorEntity.getId()).
+                path("/{id}").buildAndExpand(author.getId()).
                 toUri();
 
         return  ResponseEntity.created(location).build();
@@ -53,13 +55,11 @@ public class AuthorController {
     @GetMapping("/{id}")
     public ResponseEntity<AuthorDTO> detailsByID(@PathVariable String id){
         UUID idAuthor=UUID.fromString(id);
-       Optional<Author> author=service.findById(idAuthor);
-       if (author.isPresent()){
-           Author entity=author.get();
-           AuthorDTO dto=new AuthorDTO(entity.getId(),entity.getName(),entity.getDateBirth(),entity.getNationality());
-           return ResponseEntity.ok(dto);
-       }
-        return ResponseEntity.notFound().build();
+
+    return service.findById(idAuthor).map(author->{
+        AuthorDTO dto = mapper.toDTO(author);
+        return ResponseEntity.ok(dto);
+    }).orElseGet( ()->ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("{id}")
@@ -80,8 +80,8 @@ public class AuthorController {
 
     @GetMapping
     public ResponseEntity<List<AuthorDTO>> search(@RequestParam(value="name",required = false) String name,@RequestParam(value="nationality",required = false) String nationality){
-        List<Author> result= service.search(name,nationality);
-        List<AuthorDTO> list=result.stream().map(author -> new AuthorDTO(author.getId(),author.getName(),author.getDateBirth(),author.getNationality())).collect(Collectors.toList());
+        List<Author> result= service.searchByExample(name,nationality);
+        List<AuthorDTO> list=result.stream().map(mapper::toDTO).collect(Collectors.toList());
         return ResponseEntity.ok(list);
     }
 

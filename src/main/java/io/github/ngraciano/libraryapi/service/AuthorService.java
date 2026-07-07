@@ -7,6 +7,8 @@ import io.github.ngraciano.libraryapi.repository.AuthorRepository;
 import io.github.ngraciano.libraryapi.repository.BookRepository;
 import io.github.ngraciano.libraryapi.validator.AuthorValidator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -57,6 +59,16 @@ public class AuthorService {
         return repository.findByNationality(nationality);
     }
     return repository.findAll();
+    }
+
+    public List<Author> searchByExample(String name,String nationality){
+        Author author=new Author();
+        author.setName(name);
+        author.setNationality(nationality);
+
+        ExampleMatcher matcher=ExampleMatcher.matching().withIgnorePaths("id","dateBirth").withIgnoreNullValues().withIgnoreCase().withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING);
+        Example<Author> authorExample=Example.of(author,matcher);
+        return repository.findAll(authorExample);
     }
 
     public boolean hasBook(Author author){
