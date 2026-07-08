@@ -2,12 +2,20 @@ package io.github.ngraciano.libraryapi.service;
 
 
 import io.github.ngraciano.libraryapi.model.Book;
+import io.github.ngraciano.libraryapi.model.GenderBook;
 import io.github.ngraciano.libraryapi.repository.BookRepository;
+import io.github.ngraciano.libraryapi.repository.specs.BookSpecs;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
+import static io.github.ngraciano.libraryapi.repository.specs.BookSpecs.*;
+
+
 
 @Service
 @RequiredArgsConstructor
@@ -26,4 +34,21 @@ public class BookService {
     public void delete(Book book){
         repository.delete(book);
     }
+
+    public List<Book> search(String isbn, String nameAuthor,String title, GenderBook gender, Integer yearPublication){
+//        Specification<Book> specs= Specification.where(BookSpecs.isbnEqual(isbn).and(BookSpecs.genderEqual(gender).and(BookSpecs.titleLike(title))));
+
+        Specification<Book> specs=Specification.where((root, query, cb) ->cb.conjunction());
+       if (isbn!=null){
+           specs=specs.and(isbnEqual(isbn));
+       }
+       if (title != null){
+           specs=specs.and(titleLike(title));
+       }
+       if (gender !=null){
+           specs=specs.and(genderEqual(gender));
+       }
+        return  repository.findAll(specs);
+    }
+
 }

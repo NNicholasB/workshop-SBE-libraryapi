@@ -7,6 +7,7 @@ import io.github.ngraciano.libraryapi.controller.dto.ResultSearchBookDTO;
 import io.github.ngraciano.libraryapi.controller.mappers.BookMapper;
 import io.github.ngraciano.libraryapi.exceptions.DuplicateEntryException;
 import io.github.ngraciano.libraryapi.model.Book;
+import io.github.ngraciano.libraryapi.model.GenderBook;
 import io.github.ngraciano.libraryapi.service.BookService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +15,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("books")
@@ -48,5 +51,16 @@ public class BookController implements GenericController {
             service.delete(book);
             return ResponseEntity.noContent().build();
         }).orElseGet(()->ResponseEntity.notFound().build());
+    }
+
+    @GetMapping
+    public ResponseEntity<List<ResultSearchBookDTO>>search(@RequestParam(value="isbn",required = false)String isbn,
+                                                           @RequestParam(value="title",required = false)String title,
+                                                           @RequestParam(value="nameAuthor",required = false)String nameAuthor,
+                                                           @RequestParam(value="gender",required = false)GenderBook gender,
+                                                           @RequestParam(value="yearPublication",required = false)Integer yearPublication
+                                                           ){
+        var result=service.search(isbn, title, nameAuthor, gender, yearPublication);
+       return ResponseEntity.ok(result.stream().map(mapper::toDTO).collect(Collectors.toList()));
     }
 }
