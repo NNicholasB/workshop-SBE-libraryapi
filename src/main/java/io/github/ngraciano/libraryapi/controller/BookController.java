@@ -15,23 +15,24 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.net.URI;
+
 @RestController
 @RequestMapping("books")
 @RequiredArgsConstructor
-public class BookController {
+public class BookController implements GenericController {
 
     private final BookService service;
     private final BookMapper mapper;
-    @PostMapping
-    public ResponseEntity<Object> save(@RequestBody  @Valid RegisterBookDTO dto){
-        try{
-            Book book=mapper.toEntity(dto);
-            service.save(book);
 
-            return ResponseEntity.ok(book);
-        }catch (DuplicateEntryException e){
-            var errorDTO= ErrorResponse.conflict(e.getMessage());
-            return ResponseEntity.status(errorDTO.status()).body(errorDTO);
-        }
+    @PostMapping
+    public ResponseEntity<Void> save(@RequestBody @Valid RegisterBookDTO dto) {
+
+        Book book = mapper.toEntity(dto);
+        service.save(book);
+        URI uri = generateHeaderLocation(book.getId());
+        return ResponseEntity.created(uri).build();
+
     }
+
 }

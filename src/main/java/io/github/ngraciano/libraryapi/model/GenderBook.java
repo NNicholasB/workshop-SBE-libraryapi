@@ -1,10 +1,10 @@
 package io.github.ngraciano.libraryapi.model;
 
 public enum GenderBook {
-    Fiction,
-    Fantasy,
-    Mystery,
-    Novel,
-    Biography,
-    Science
+    FICTION,
+    FANTASY,
+    MYSTERY,
+    ROMANCE,
+    BIOGRAPHY,
+    SCIENCE
 }

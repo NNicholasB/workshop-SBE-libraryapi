@@ -30,7 +30,7 @@ public class Book {
     private String title;
 
     @Column(name = "date_publication")
-    private LocalDate dataPublication;
+    private LocalDate datePublication;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "gender",length = 30,nullable = false)

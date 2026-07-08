@@ -18,7 +18,7 @@ public record RegisterBookDTO(
         String title,
         @NotNull(message = "Obligatory field.")
         @Past(message = "The date cannot be in the future.")
-        LocalDate datePublish,
+        LocalDate datePublication,
 
         GenderBook gender,
 
