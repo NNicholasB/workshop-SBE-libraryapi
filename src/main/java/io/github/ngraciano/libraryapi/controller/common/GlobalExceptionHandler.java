@@ -3,6 +3,7 @@ package io.github.ngraciano.libraryapi.controller.common;
 import io.github.ngraciano.libraryapi.controller.dto.ErrorField;
 import io.github.ngraciano.libraryapi.controller.dto.ErrorResponse;
 import io.github.ngraciano.libraryapi.exceptions.DuplicateEntryException;
+import io.github.ngraciano.libraryapi.exceptions.FieldInvalidExcepiton;
 import io.github.ngraciano.libraryapi.exceptions.OperationNotPermitted;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +38,12 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleOperationNotPermitted(OperationNotPermitted e){
         return ErrorResponse.responseDefault(e.getMessage());
+    }
+
+    @ExceptionHandler(FieldInvalidExcepiton.class)
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+    public ErrorResponse handleFieldInvalidExcepiton(FieldInvalidExcepiton e){
+        return new ErrorResponse(HttpStatus.UNPROCESSABLE_ENTITY.value(), "validate error",List.of(new ErrorField(e.getField(),e.getMessage())));
     }
 
     @ExceptionHandler(RuntimeException.class)
