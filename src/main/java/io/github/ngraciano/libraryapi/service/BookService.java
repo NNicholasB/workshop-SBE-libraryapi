@@ -35,7 +35,7 @@ public class BookService {
         repository.delete(book);
     }
 
-    public List<Book> search(String isbn, String nameAuthor,String title, GenderBook gender, Integer yearPublication){
+    public List<Book> search(String isbn, String title,String nameAuthor, GenderBook gender, Integer yearPublication){
 //        Specification<Book> specs= Specification.where(BookSpecs.isbnEqual(isbn).and(BookSpecs.genderEqual(gender).and(BookSpecs.titleLike(title))));
 
         Specification<Book> specs=Specification.where((root, query, cb) ->cb.conjunction());
@@ -48,7 +48,14 @@ public class BookService {
        if (gender !=null){
            specs=specs.and(genderEqual(gender));
        }
+       if (yearPublication != null){
+           specs=specs.and(yearPublicationEqual(yearPublication));
+       }
+        if(nameAuthor != null){
+            specs=specs.and(nameAuthorLike(nameAuthor));
+        }
         return  repository.findAll(specs);
     }
+
 
 }
