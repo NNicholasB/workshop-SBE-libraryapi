@@ -26,8 +26,7 @@ public class BookSpecs {
     public static Specification<Book> nameAuthorLike(String name){
         return (root, query, cb) ->{
             Join<Object, Object> joinAuthor= root.join("author", JoinType.LEFT);
-              return cb.like(cb.upper(joinAuthor.get("name")),"%"name.toUpperCase()+"%");
-//            return cb.like( cb.upper(root.get("author").get("name")),"%"+name.toUpperCase()+"%");
+              return cb.like(cb.upper(joinAuthor.get("name")),"%"+name.toUpperCase()+"%");
         };
     }
 }

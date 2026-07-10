@@ -5,6 +5,7 @@ import io.github.ngraciano.libraryapi.model.Book;
 import io.github.ngraciano.libraryapi.model.GenderBook;
 import io.github.ngraciano.libraryapi.repository.BookRepository;
 import io.github.ngraciano.libraryapi.repository.specs.BookSpecs;
+import io.github.ngraciano.libraryapi.validator.BookValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -22,8 +23,10 @@ import static io.github.ngraciano.libraryapi.repository.specs.BookSpecs.*;
 public class BookService {
 
     private final BookRepository repository;
+    private final BookValidator validator;
 
     public Book save(Book book) {
+        validator.validator(book);
         return repository.save(book);
     }
 
@@ -56,6 +59,15 @@ public class BookService {
         }
         return  repository.findAll(specs);
     }
+
+
+    public void update(Book book) {
+    if (book.getId() ==null){
+        throw new IllegalArgumentException("for update,is necessary book saved in the db");
+    }
+    validator.validator(book);
+    repository.save(book);
+}
 
 
 }
