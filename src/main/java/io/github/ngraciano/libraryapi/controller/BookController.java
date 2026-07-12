@@ -11,6 +11,7 @@ import io.github.ngraciano.libraryapi.model.GenderBook;
 import io.github.ngraciano.libraryapi.service.BookService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -54,14 +55,17 @@ public class BookController implements GenericController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ResultSearchBookDTO>>search(@RequestParam(value="isbn",required = false)String isbn,
+    public ResponseEntity<Page<ResultSearchBookDTO>>search(@RequestParam(value="isbn",required = false)String isbn,
                                                            @RequestParam(value="title",required = false)String title,
                                                            @RequestParam(value="nameAuthor",required = false)String nameAuthor,
                                                            @RequestParam(value="gender",required = false)GenderBook gender,
-                                                           @RequestParam(value="yearPublication",required = false)Integer yearPublication
+                                                           @RequestParam(value="yearPublication",required = false)Integer yearPublication,
+                                                           @RequestParam(value="page",defaultValue="0") Integer page,
+                                                           @RequestParam(value="sizePage",defaultValue = "10") Integer sizePage
                                                            ){
-        var result=service.search(isbn, title, nameAuthor, gender, yearPublication);
-       return ResponseEntity.ok(result.stream().map(mapper::toDTO).collect(Collectors.toList()));
+        Page<Book> pageResult=service.search(isbn, title, nameAuthor, gender, yearPublication,page,sizePage);
+        Page<ResultSearchBookDTO> result = pageResult.map(mapper::toDTO);
+        return ResponseEntity.ok(result);
     }
 
     @PutMapping("{id}")
