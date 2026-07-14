@@ -1,6 +1,8 @@
 package io.github.ngraciano.libraryapi.config;
 
 
+import io.github.ngraciano.libraryapi.security.CustomUserDetailsService;
+import io.github.ngraciano.libraryapi.service.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -46,10 +48,11 @@ public class SecurityConfig {
     }
 
     @Bean
-    public UserDetailsService userDetailsService(PasswordEncoder encoder){
-        UserDetails user1= User.builder().username("usuario").password(encoder.encode("123")).roles("USER").build();
-        UserDetails user2= User.builder().username("admin").password(encoder.encode("1234")).roles("ADMIN").build();
-        return new InMemoryUserDetailsManager(user1,user2);
+    public UserDetailsService userDetailsService(UserService userService){
+//        UserDetails user1= User.builder().username("usuario").password(encoder.encode("123")).roles("USER").build();
+//        UserDetails user2= User.builder().username("admin").password(encoder.encode("1234")).roles("ADMIN").build();
+//        return new InMemoryUserDetailsManager(user1,user2);
+        return new CustomUserDetailsService(userService);
 
     }
 }
