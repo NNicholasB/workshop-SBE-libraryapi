@@ -3,6 +3,7 @@ package io.github.ngraciano.libraryapi.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -23,9 +24,17 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
             return http
                     .csrf(AbstractHttpConfigurer::disable)
-                    .formLogin(configurer->configurer.loginPage("/login").permitAll())
+                    .formLogin(configurer-> {
+                        configurer.loginPage("/login");
+                    })
                    .httpBasic(Customizer.withDefaults())
-                    .authorizeHttpRequests(authorize->authorize.anyRequest().authenticated())
+                    .authorizeHttpRequests(authorize-> {
+                        authorize.requestMatchers("/login").permitAll();
+                        authorize.requestMatchers("/authors/**").hasRole("ADMIN");
+                        authorize.requestMatchers("/books/**").hasAnyRole("ADMIN","USER");
+
+                        authorize.anyRequest().authenticated();
+                    })
                     .build();
     }
 
