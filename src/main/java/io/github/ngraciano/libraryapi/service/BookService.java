@@ -3,8 +3,10 @@ package io.github.ngraciano.libraryapi.service;
 
 import io.github.ngraciano.libraryapi.model.Book;
 import io.github.ngraciano.libraryapi.model.GenderBook;
+import io.github.ngraciano.libraryapi.model.User;
 import io.github.ngraciano.libraryapi.repository.BookRepository;
 import io.github.ngraciano.libraryapi.repository.specs.BookSpecs;
+import io.github.ngraciano.libraryapi.security.SecurityService;
 import io.github.ngraciano.libraryapi.validator.BookValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -27,9 +29,12 @@ public class BookService {
 
     private final BookRepository repository;
     private final BookValidator validator;
+    private final SecurityService securityService;
 
     public Book save(Book book) {
         validator.validator(book);
+        User user=securityService.getLoggedUser();
+        book.setUser(user);
         return repository.save(book);
     }
 

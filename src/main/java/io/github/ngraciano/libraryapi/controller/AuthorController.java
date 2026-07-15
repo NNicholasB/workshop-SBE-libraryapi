@@ -7,11 +7,16 @@ import io.github.ngraciano.libraryapi.controller.mappers.AuthorMapper;
 import io.github.ngraciano.libraryapi.exceptions.DuplicateEntryException;
 import io.github.ngraciano.libraryapi.exceptions.OperationNotPermitted;
 import io.github.ngraciano.libraryapi.model.Author;
+import io.github.ngraciano.libraryapi.model.User;
+import io.github.ngraciano.libraryapi.security.SecurityService;
 import io.github.ngraciano.libraryapi.service.AuthorService;
+import io.github.ngraciano.libraryapi.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -31,11 +36,8 @@ public class AuthorController implements GenericController {
     @PostMapping
     @PreAuthorize("hasRole('GERENTE')")
     public ResponseEntity<Object> save(@RequestBody @Valid AuthorDTO dto) {
-
-            Author author = mapper.toEntity(dto);
-
+        Author author = mapper.toEntity(dto);
             service.save(author);
-
             URI location = generateHeaderLocation(author.getId());
             return ResponseEntity.created(location).build();
 

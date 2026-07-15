@@ -3,8 +3,10 @@ package io.github.ngraciano.libraryapi.service;
 
 import io.github.ngraciano.libraryapi.exceptions.OperationNotPermitted;
 import io.github.ngraciano.libraryapi.model.Author;
+import io.github.ngraciano.libraryapi.model.User;
 import io.github.ngraciano.libraryapi.repository.AuthorRepository;
 import io.github.ngraciano.libraryapi.repository.BookRepository;
+import io.github.ngraciano.libraryapi.security.SecurityService;
 import io.github.ngraciano.libraryapi.validator.AuthorValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Example;
@@ -21,10 +23,13 @@ public class AuthorService {
         private final AuthorValidator validator;
         private final AuthorRepository repository;
         private final BookRepository bookRepository;
+         private final SecurityService securityService;
 
     public Author save(Author author)
     {
         validator.Validate(author);
+        User user=securityService.getLoggedUser();
+        author.setUser(user);
         return repository.save(author);
     }
 
