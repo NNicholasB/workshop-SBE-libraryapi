@@ -11,6 +11,7 @@ import io.github.ngraciano.libraryapi.service.AuthorService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -28,6 +29,7 @@ public class AuthorController implements GenericController {
     private final AuthorMapper mapper;
 
     @PostMapping
+    @PreAuthorize("hasRole('GERENTE')")
     public ResponseEntity<Object> save(@RequestBody @Valid AuthorDTO dto) {
 
             Author author = mapper.toEntity(dto);
@@ -40,6 +42,7 @@ public class AuthorController implements GenericController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('OPERADOR','GERENTE')")
     public ResponseEntity<AuthorDTO> detailsByID(@PathVariable String id) {
         UUID idAuthor = UUID.fromString(id);
 
@@ -50,6 +53,7 @@ public class AuthorController implements GenericController {
     }
 
     @DeleteMapping("{id}")
+    @PreAuthorize("hasRole('GERENTE')")
     public ResponseEntity<Object> deleteById(@PathVariable String id) {
         UUID idAuthor = UUID.fromString(id);
         Optional<Author> author = service.findById(idAuthor);
@@ -63,6 +67,7 @@ public class AuthorController implements GenericController {
 
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('OPERADOR','GERENTE')")
     public ResponseEntity<List<AuthorDTO>> search(@RequestParam(value = "name", required = false) String name, @RequestParam(value = "nationality", required = false) String nationality) {
         List<Author> result = service.searchByExample(name, nationality);
         List<AuthorDTO> list = result.stream().map(mapper::toDTO).collect(Collectors.toList());
@@ -70,6 +75,7 @@ public class AuthorController implements GenericController {
     }
 
     @PutMapping("{id}")
+    @PreAuthorize("hasRole('GERENTE')")
     public ResponseEntity<Object> update(@PathVariable("id") String id, @RequestBody @Valid AuthorDTO dto) {
         UUID idAuthor = UUID.fromString(id);
         Optional<Author> authorOp = service.findById(idAuthor);

@@ -6,7 +6,7 @@ import io.github.ngraciano.libraryapi.exceptions.DuplicateEntryException;
 import io.github.ngraciano.libraryapi.exceptions.FieldInvalidExcepiton;
 import io.github.ngraciano.libraryapi.exceptions.OperationNotPermitted;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -39,10 +39,15 @@ public class GlobalExceptionHandler {
     public ErrorResponse handleOperationNotPermitted(OperationNotPermitted e){
         return ErrorResponse.responseDefault(e.getMessage());
     }
+    @ExceptionHandler(AccessDeniedException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorResponse handleAccessDeniedException(AccessDeniedException e){
+        return new ErrorResponse(HttpStatus.FORBIDDEN.value(), "Access Denied", List.of());
+    }
 
     @ExceptionHandler(FieldInvalidExcepiton.class)
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
-    public ErrorResponse handleFieldInvalidExcepiton(FieldInvalidExcepiton e){
+    public ErrorResponse handleFieldInvalidException(FieldInvalidExcepiton e){
         return new ErrorResponse(HttpStatus.UNPROCESSABLE_ENTITY.value(), "validate error",List.of(new ErrorField(e.getField(),e.getMessage())));
     }
 
