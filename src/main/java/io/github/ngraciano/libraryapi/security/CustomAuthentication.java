@@ -12,13 +12,13 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Getter
-public class CustomAuthAuthentication implements Authentication {
+public class CustomAuthentication implements Authentication {
 
    private final User user;
 
     @Override
     public Collection<GrantedAuthority> getAuthorities() {
-        return this.user.getRoles().stream().map(role->new SimpleGrantedAuthority("ROLE_"+role)).collect(Collectors.toList());
+        return this.user.getRoles().stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
     }
 
     @Override

@@ -2,6 +2,7 @@ package io.github.ngraciano.libraryapi.config;
 
 
 import io.github.ngraciano.libraryapi.security.CustomUserDetailsService;
+import io.github.ngraciano.libraryapi.security.LoginSocialSuccessHandler;
 import io.github.ngraciano.libraryapi.service.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,6 +12,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -25,7 +27,7 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, LoginSocialSuccessHandler successHandler) throws Exception{
             return http
                     .csrf(AbstractHttpConfigurer::disable)
 //                    .formLogin(configurer-> {
@@ -40,7 +42,8 @@ public class SecurityConfig {
 
                         authorize.anyRequest().authenticated();
                     })
-                    .oauth2Login(Customizer.withDefaults())
+                    .oauth2Login(oauth2->{oauth2.successHandler(successHandler);
+                    })
                     .build();
     }
 
@@ -57,5 +60,10 @@ public class SecurityConfig {
 //        return new InMemoryUserDetailsManager(user1,user2);
         return new CustomUserDetailsService(userService);
 
+    }
+
+    @Bean
+    public GrantedAuthorityDefaults grantedAuthorityDefaults(){
+        return new GrantedAuthorityDefaults("");
     }
 }

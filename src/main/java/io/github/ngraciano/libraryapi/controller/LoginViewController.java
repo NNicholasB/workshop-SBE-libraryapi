@@ -1,6 +1,7 @@
 package io.github.ngraciano.libraryapi.controller;
 
 
+import io.github.ngraciano.libraryapi.security.CustomAuthentication;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +18,10 @@ public class LoginViewController {
     @GetMapping("/")
     @ResponseBody
     public String pageHome(Authentication authentication){
-        return "Ola"+ authentication.getName();
+        if (authentication instanceof CustomAuthentication){
+            System.out.println(((CustomAuthentication) authentication).getUser());
+        }
+        return "Ol1972" +
+                ""+ authentication.getName();
     }
 }

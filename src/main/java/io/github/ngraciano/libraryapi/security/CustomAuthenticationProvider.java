@@ -35,7 +35,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
 
         if (passwordMatch){
-            return new CustomAuthAuthentication(userFound);
+            return new CustomAuthentication(userFound);
         }
         throw getUsernameNotFoundException();
     }

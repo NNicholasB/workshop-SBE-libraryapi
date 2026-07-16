@@ -18,7 +18,8 @@ target/
 *.iws
 *.iml
 *.ipr
-application-local.properties
+*.yaml
+src/main/resources/application-local.properties
 .env
 
 ### NetBeans ###
