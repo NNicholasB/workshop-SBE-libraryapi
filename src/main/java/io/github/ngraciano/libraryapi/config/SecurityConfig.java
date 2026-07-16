@@ -50,7 +50,7 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder(10);
     }
 
-    @Bean
+//    @Bean
     public UserDetailsService userDetailsService(UserService userService){
 //        UserDetails user1= User.builder().username("usuario").password(encoder.encode("123")).roles("USER").build();
 //        UserDetails user2= User.builder().username("admin").password(encoder.encode("1234")).roles("ADMIN").build();
