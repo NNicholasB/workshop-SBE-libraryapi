@@ -21,7 +21,6 @@ public class LoginViewController {
         if (authentication instanceof CustomAuthentication){
             System.out.println(((CustomAuthentication) authentication).getUser());
         }
-        return "Ol1972" +
-                ""+ authentication.getName();
+        return "Ola,@ "+ authentication.getName();
     }
 }
