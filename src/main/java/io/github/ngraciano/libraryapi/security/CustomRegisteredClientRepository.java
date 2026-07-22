@@ -33,7 +33,7 @@ public class CustomRegisteredClientRepository implements RegisteredClientReposit
         return null;
     }
     return RegisteredClient.withId(client.getId().toString()).clientId(client.getClientId()).clientSecret(client.getClientSecret()).redirectUri(client.getRedirectUri()).scope(client.getScope()).clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC).authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE).authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
-            .tokenSettings(tokenSettings).clientSettings(clientSettings)
+            .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN) .tokenSettings(tokenSettings).clientSettings(clientSettings)
             .build();
 
     }
