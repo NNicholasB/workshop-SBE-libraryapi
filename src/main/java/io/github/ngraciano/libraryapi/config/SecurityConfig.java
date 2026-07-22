@@ -2,6 +2,7 @@ package io.github.ngraciano.libraryapi.config;
 
 
 import io.github.ngraciano.libraryapi.security.CustomUserDetailsService;
+import io.github.ngraciano.libraryapi.security.JwtAuthenticationFilter;
 import io.github.ngraciano.libraryapi.security.LoginSocialSuccessHandler;
 import io.github.ngraciano.libraryapi.service.UserService;
 import org.springframework.context.annotation.Bean;
@@ -20,6 +21,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
+import org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
@@ -29,7 +31,7 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, LoginSocialSuccessHandler successHandler) throws Exception{
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter, LoginSocialSuccessHandler successHandler) throws Exception{
             return http
                     .csrf(AbstractHttpConfigurer::disable)
                     .formLogin(configurer-> {
@@ -46,6 +48,7 @@ public class SecurityConfig {
                     .oauth2Login(oauth2->{oauth2.loginPage("/login").successHandler(successHandler);
                     })
                     .oauth2ResourceServer(oauth2Rs->oauth2Rs.jwt(Customizer.withDefaults()))
+                    .addFilterAfter(jwtAuthenticationFilter, BearerTokenAuthenticationFilter.class)
                     .build();
     }
 
