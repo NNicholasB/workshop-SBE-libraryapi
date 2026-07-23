@@ -11,6 +11,10 @@ import io.github.ngraciano.libraryapi.model.User;
 import io.github.ngraciano.libraryapi.security.SecurityService;
 import io.github.ngraciano.libraryapi.service.AuthorService;
 import io.github.ngraciano.libraryapi.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +32,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("authors")
 @RequiredArgsConstructor
+@Tag(name="Authors")
 public class AuthorController implements GenericController {
 
     private final AuthorService service;
@@ -35,6 +40,12 @@ public class AuthorController implements GenericController {
 
     @PostMapping
     @PreAuthorize("hasRole('GERENTE')")
+    @Operation(summary = "Salvar", description = "cadastrar novo autor" )
+    @ApiResponses({
+            @ApiResponse(responseCode="201",description = "Cadastrado com sucesso"),
+            @ApiResponse(responseCode="422",description = "Erro de validacao"),
+            @ApiResponse(responseCode="409",description = "Autor ja cadastrado")
+    })
     public ResponseEntity<Object> save(@RequestBody @Valid AuthorDTO dto) {
         Author author = mapper.toEntity(dto);
             service.save(author);
@@ -45,6 +56,11 @@ public class AuthorController implements GenericController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('OPERADOR','GERENTE')")
+    @Operation(summary = "Obter detalhes", description = "Retornar os dados do autor pelo Id")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Autor encontrado"),
+            @ApiResponse(responseCode = "400", description = "Autor nao encontrado")
+    })
     public ResponseEntity<AuthorDTO> detailsByID(@PathVariable String id) {
         UUID idAuthor = UUID.fromString(id);
 
@@ -56,6 +72,12 @@ public class AuthorController implements GenericController {
 
     @DeleteMapping("{id}")
     @PreAuthorize("hasRole('GERENTE')")
+    @Operation(summary = "Deletar", description = "Deleta um autor existente")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Deletado com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Autor nao encontrado"),
+            @ApiResponse(responseCode = "400", description = "Autor possui um livro cadastrado")
+    })
     public ResponseEntity<Object> deleteById(@PathVariable String id) {
         UUID idAuthor = UUID.fromString(id);
         Optional<Author> author = service.findById(idAuthor);
@@ -70,6 +92,10 @@ public class AuthorController implements GenericController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('OPERADOR','GERENTE')")
+    @Operation(summary = "Pesquisar", description = "Realiza uma pesquisar por parametros")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Sucesso"),
+    })
     public ResponseEntity<List<AuthorDTO>> search(@RequestParam(value = "name", required = false) String name, @RequestParam(value = "nationality", required = false) String nationality) {
         List<Author> result = service.searchByExample(name, nationality);
         List<AuthorDTO> list = result.stream().map(mapper::toDTO).collect(Collectors.toList());
@@ -78,6 +104,12 @@ public class AuthorController implements GenericController {
 
     @PutMapping("{id}")
     @PreAuthorize("hasRole('GERENTE')")
+    @Operation(summary = "Atualizar", description = "Atualiza um autor existente")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Atualizado com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Autor nao encontrado"),
+            @ApiResponse(responseCode = "409", description = "Autor ja cadastrado")
+    })
     public ResponseEntity<Object> update(@PathVariable("id") String id, @RequestBody @Valid AuthorDTO dto) {
         UUID idAuthor = UUID.fromString(id);
         Optional<Author> authorOp = service.findById(idAuthor);
